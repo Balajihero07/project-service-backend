@@ -1,0 +1,33 @@
+{
+  "name": "project-service-backend",
+  "version": "1.0.0",
+  "description": "Backend for Project Service - household service booking platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "node --test",
+    "db:init": "node src/scripts/initDb.js",
+    "seed:admin": "node src/scripts/seedAdmin.js"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.0",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "express-rate-limit": "^7.5.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.12.1",
+    "multer": "^1.4.5-lts.1",
+    "neondatabase": "^0.0.1-security",
+    "pg": "^8.23.1",
+    "serverless": "^4.43.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
