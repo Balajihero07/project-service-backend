@@ -253,13 +253,45 @@ exports.register = asyncHandler(async (req, res) => {
 });
 
 // GET /api/providers/me
+
 exports.getMine = asyncHandler(async (req, res) => {
   const rows = await db`
     ${db.unsafe(BASE)}
     WHERE p.user_id = ${req.user.user_id}
   `;
-  if (!rows[0]) throw new ApiError(404, 'Provider not found');
+
+  if (!rows[0]) {
+    throw new ApiError(404, 'Provider not found');
+  }
+
+  const upiRows = await db`
+    SELECT upi_id
+    FROM service_providers
+    WHERE user_id = ${req.user.user_id}
+  `;
+
+  rows[0].upi_id = upiRows[0]?.upi_id ?? null;
+
   ok(res, 'Provider fetched', rows[0]);
+});
+
+// GET /api/upiid pay
+
+exports.updateMyUpi = asyncHandler(async (req, res) => {
+  const upiId = String(req.body.upi_id || '').trim();
+
+  const rows = await db`
+    UPDATE service_providers
+    SET upi_id = ${upiId}
+    WHERE user_id = ${req.user.user_id}
+    RETURNING provider_id, upi_id
+  `;
+
+  if (!rows[0]) {
+    throw new ApiError(404, 'Provider profile not found.');
+  }
+
+  ok(res, 'UPI ID saved successfully.', rows[0]);
 });
 
 // GET /api/providers/:id

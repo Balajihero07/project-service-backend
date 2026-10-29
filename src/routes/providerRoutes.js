@@ -100,6 +100,22 @@ router.post('/register', protect, authorize('PROVIDER'),
   ],
   validate, c.register);
 
+
+    router.put(
+      '/me/upi',
+      protect,
+      authorize('PROVIDER'),
+      [
+        body('upi_id')
+          .trim()
+          .matches(/^[A-Za-z0-9._-]{2,100}@[A-Za-z0-9.-]{2,64}$/)
+          .withMessage('Enter a valid UPI ID, for example name@upi.'),
+      ],
+      validate,
+      c.updateMyUpi
+    );
+
+
 router.put('/:id', protect, authorize('PROVIDER', 'ADMIN'),
   upload.fields([{ name: 'id_proof', maxCount: 1 }, { name: 'live_photo', maxCount: 1 }]),
   [id,
@@ -114,5 +130,7 @@ router.put('/:id', protect, authorize('PROVIDER', 'ADMIN'),
 router.put('/:id/verify', protect, authorize('ADMIN'), [
   id, body('status').isIn(['VERIFIED', 'REJECTED', 'PENDING']),
 ], validate, c.verify);
+
+
 
 module.exports = router;

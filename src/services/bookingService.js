@@ -93,17 +93,34 @@ const loadBooking = async (bookingId, user) => {
   return booking;
 };
 
+
 const presentBooking = (booking, user) => {
   const result = { ...booking };
+
   delete result.otp_hash;
   delete result.otp;
   delete result.otp_attempts;
+
   result.otp_verified = Boolean(result.otp_used_at);
-  if (user.role !== 'CUSTOMER' && user.role !== 'ADMIN') {
+
+  // Only the customer who owns the booking, an admin,
+  // and the provider assigned to the booking can see the
+  // customer's phone number.
+  const isAssignedProvider =
+    user.role === 'PROVIDER' &&
+    Number(result.provider_user_id) === Number(user.user_id);
+
+  if (
+    user.role !== 'CUSTOMER' &&
+    user.role !== 'ADMIN' &&
+    !isAssignedProvider
+  ) {
     delete result.customer_phone;
   }
+
   return result;
 };
+
 
 const createBooking = async (data, customerId, bookingType = 'live') => {
   const {
@@ -284,9 +301,9 @@ const listProviderRequests = async (userId) => {
 };
 
 const listProviderBookings = async (userId, category, options = {}) => {
-  const statuses = category === 'history'
-    ? ['COMPLETED', 'CANCELLED']
-    : ['ACCEPTED', 'ON_THE_WAY', 'STARTED'];
+const statuses = category === 'history'
+  ? ['COMPLETED', 'CANCELLED', 'CLOSED']
+  : ['ACCEPTED', 'ON_THE_WAY', 'STARTED'];
   const { status = null } = options;
   const page = Math.max(1, Number(options.page) || 1);
   const limit = Math.min(100, Math.max(1, Number(options.limit) || 20));

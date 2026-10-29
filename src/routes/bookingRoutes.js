@@ -65,7 +65,11 @@ router.get('/provider/active', authorize('PROVIDER'), [
   query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
 ], validate, c.providerActiveBookings);
 router.get('/provider/history', authorize('PROVIDER'), [
-  query('status').optional().isIn(['COMPLETED', 'CANCELLED']),
+ query('status').optional().isIn([
+  'COMPLETED',
+  'CANCELLED',
+  'CLOSED',
+ ]),
   query('page').optional().isInt({ min: 1 }).toInt(),
   query('limit').optional().isInt({ min: 1, max: 100 }).toInt(),
 ], validate, c.providerBookingHistory);
